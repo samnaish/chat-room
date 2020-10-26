@@ -1,35 +1,28 @@
 class MessagesController < ApplicationController
   before_action :set_message, only: [:show, :edit, :update, :destroy]
 
-  # GET /messages
-  # GET /messages.json
   def index
     @messages = Message.all
   end
 
-  # GET /messages/1
-  # GET /messages/1.json
+
   def show
   end
 
-  # GET /messages/new
   def new
     @message = Message.new
   end
 
-  # GET /messages/1/edit
   def edit
   end
 
-  # POST /messages
-  # POST /messages.json
   def create
     @message = Message.new(message_params)
-
     @message.user = current_user
-
     @message.save
-    redirect_to request.referrer
+    
+    ActionCable.server.broadcast "room_channel_#{@message.room_id}" message: "hello"
+
   end
 
   # PATCH/PUT /messages/1
